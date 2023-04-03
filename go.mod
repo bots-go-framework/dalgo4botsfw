@@ -10,7 +10,7 @@ require (
 	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/strongo/app v0.0.1 // indirect
 	github.com/strongo/bots-api-fbm v0.0.0-20180428075108-f61e04d86e75 // indirect
-	github.com/strongo/bots-framework v0.9.0 // indirect
+	github.com/strongo/bots-framework v0.9.6 // indirect
 	github.com/strongo/dalgo v0.0.26 // indirect
 	github.com/strongo/emoji v0.0.1 // indirect
 	github.com/strongo/gamp v0.0.0-20180514004759-fdf2ce90b6b9 // indirect

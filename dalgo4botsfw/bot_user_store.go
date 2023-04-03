@@ -10,8 +10,7 @@ import (
 var _ botsfw.BotUserStore = (*botUserStore)(nil)
 
 type botUserStore struct {
-	collection     string
-	db             dal.Database
+	dalgoStore
 	newBotUserData func() botsfw.BotUser
 }
 
@@ -27,8 +26,10 @@ func NewBotUserStore(db dal.Database, collection string, newBotUserData func() b
 		panic("newBotUserData is nil")
 	}
 	return &botUserStore{
-		db:             db,
-		collection:     collection,
+		dalgoStore: dalgoStore{
+			db:         db,
+			collection: collection,
+		},
 		newBotUserData: newBotUserData,
 	}
 }

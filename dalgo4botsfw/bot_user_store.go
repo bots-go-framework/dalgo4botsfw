@@ -10,13 +10,16 @@ import (
 
 var _ botsfw.BotUserStore = (*botUserStore)(nil)
 
+type BotUserCreator func(c context.Context, botID string, apiUser botsfw.WebhookActor) (botsfw.BotUser, error)
+
 type botUserStore struct {
 	dalgoStore
 	newBotUserData func() botsfw.BotUser
+	createBotUser  BotUserCreator
 }
 
 // NewBotUserStore creates new bot user store
-func NewBotUserStore(collection string, db DbProvider, newBotUserData func() botsfw.BotUser) botsfw.BotUserStore {
+func NewBotUserStore(collection string, db DbProvider, newBotUserData func() botsfw.BotUser, createBotUser BotUserCreator) botsfw.BotUserStore {
 	if db == nil {
 		panic("db is nil")
 	}
@@ -32,6 +35,7 @@ func NewBotUserStore(collection string, db DbProvider, newBotUserData func() bot
 			collection: collection,
 		},
 		newBotUserData: newBotUserData,
+		createBotUser:  createBotUser,
 	}
 }
 
@@ -72,7 +76,7 @@ func (store botUserStore) SaveBotUser(c context.Context, botUserID any, botUserD
 }
 
 func (store botUserStore) CreateBotUser(c context.Context, botID string, apiUser botsfw.WebhookActor) (botsfw.BotUser, error) {
-	panic("should not be here") //TODO remove me
+	return store.createBotUser(c, botID, apiUser)
 }
 
 func (store botUserStore) botUserKey(botUserID any) *dal.Key {

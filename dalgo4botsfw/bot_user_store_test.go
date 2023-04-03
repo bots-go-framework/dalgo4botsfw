@@ -10,6 +10,7 @@ func TestNewBotUserStore(t *testing.T) {
 		collection     string
 		db             DbProvider
 		newBotUserData func() botsfw.BotUser
+		createNewUser  BotUserCreator
 	}
 	tests := []struct {
 		name        string
@@ -27,7 +28,7 @@ func TestNewBotUserStore(t *testing.T) {
 					}
 				}()
 			}
-			if got := NewBotUserStore(tt.args.collection, tt.args.db, tt.args.newBotUserData); got == nil {
+			if got := NewBotUserStore(tt.args.collection, tt.args.db, tt.args.newBotUserData, tt.args.createNewUser); got == nil {
 				t.Error("NewBotUserStore() returned nil")
 			}
 		})

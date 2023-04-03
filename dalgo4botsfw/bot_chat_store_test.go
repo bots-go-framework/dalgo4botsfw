@@ -25,7 +25,7 @@ func TestNewBotChatStore(t *testing.T) {
 					}
 				}()
 			}
-			if got := NewBotChatStore(tt.args.collection, tt.args.db); got == nil {
+			if got := NewBotChatStore(tt.args.collection, tt.args.db, nil); got == nil {
 				t.Error("NewBotChatStore() returned nil")
 			}
 		})

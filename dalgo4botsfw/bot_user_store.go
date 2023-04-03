@@ -2,6 +2,7 @@ package dalgo4botsfw
 
 import (
 	"context"
+	"fmt"
 	"github.com/strongo/bots-framework/botsfw"
 	"github.com/strongo/dalgo/dal"
 	"github.com/strongo/dalgo/record"
@@ -15,7 +16,7 @@ type botUserStore struct {
 }
 
 // NewBotUserStore creates new bot user store
-func NewBotUserStore(db dal.Database, collection string, newBotUserData func() botsfw.BotUser) botsfw.BotUserStore {
+func NewBotUserStore(collection string, db DbProvider, newBotUserData func() botsfw.BotUser) botsfw.BotUserStore {
 	if db == nil {
 		panic("db is nil")
 	}
@@ -50,14 +51,22 @@ func (store botUserStore) GetBotUserByID(c context.Context, botUserID any) (bots
 			Record: dal.NewRecordWithData(key, botUserData),
 		},
 	}
-	return botUser.Data, store.db.Get(c, botUser.Record)
+	db, err := store.db(c)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get db: %w", err)
+	}
+	return botUser.Data, db.Get(c, botUser.Record)
 }
 
 // SaveBotUser saves bot user data
 func (store botUserStore) SaveBotUser(c context.Context, botUserID any, botUserData botsfw.BotUser) error {
 	key := store.botUserKey(botUserID)
 	record := dal.NewRecordWithData(key, botUserData)
-	return store.db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	db, err := store.db(c)
+	if err != nil {
+		return fmt.Errorf("failed to get db: %w", err)
+	}
+	return db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		return tx.Set(c, record)
 	})
 }

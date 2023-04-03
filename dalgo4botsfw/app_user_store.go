@@ -3,7 +3,6 @@ package dalgo4botsfw
 import (
 	"context"
 	"github.com/strongo/bots-framework/botsfw"
-	"github.com/strongo/dalgo/dal"
 )
 
 var _ botsfw.BotAppUserStore = (*appUserStore)(nil)
@@ -20,7 +19,7 @@ func (a appUserStore) CreateAppUser(c context.Context, botID string, actor botsf
 	panic("implement me") //TODO implement me
 }
 
-func NewAppUserStore(collection string, db dal.Database) botsfw.BotAppUserStore {
+func NewAppUserStore(collection string, db DbProvider) botsfw.BotAppUserStore {
 	if collection == "" {
 		panic("collection is empty")
 	}

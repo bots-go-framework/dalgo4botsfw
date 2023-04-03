@@ -3,7 +3,6 @@ package dalgo4botsfw
 import (
 	"context"
 	"github.com/strongo/bots-framework/botsfw"
-	"github.com/strongo/dalgo/dal"
 )
 
 var _ botsfw.BotChatStore = (*botChatStore)(nil)
@@ -32,7 +31,7 @@ func (b botChatStore) Close(c context.Context) error {
 	panic("implement me")
 }
 
-func NewBotChatStore(collection string, db dal.Database) botsfw.BotChatStore {
+func NewBotChatStore(collection string, db DbProvider) botsfw.BotChatStore {
 	if collection == "" {
 		panic("collection is empty")
 	}

@@ -2,14 +2,13 @@ package dalgo4botsfw
 
 import (
 	"github.com/strongo/bots-framework/botsfw"
-	"github.com/strongo/dalgo/dal"
 	"testing"
 )
 
 func TestNewBotUserStore(t *testing.T) {
 	type args struct {
-		db             dal.Database
 		collection     string
+		db             DbProvider
 		newBotUserData func() botsfw.BotUser
 	}
 	tests := []struct {
@@ -28,7 +27,7 @@ func TestNewBotUserStore(t *testing.T) {
 					}
 				}()
 			}
-			if got := NewBotUserStore(tt.args.db, tt.args.collection, tt.args.newBotUserData); got == nil {
+			if got := NewBotUserStore(tt.args.collection, tt.args.db, tt.args.newBotUserData); got == nil {
 				t.Error("NewBotUserStore() returned nil")
 			}
 		})

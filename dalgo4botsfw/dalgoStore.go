@@ -1,8 +1,13 @@
 package dalgo4botsfw
 
-import "github.com/strongo/dalgo/dal"
+import (
+	"context"
+	"github.com/strongo/dalgo/dal"
+)
+
+type DbProvider func(c context.Context) (dal.Database, error)
 
 type dalgoStore struct {
 	collection string
-	db         dal.Database
+	db         DbProvider
 }

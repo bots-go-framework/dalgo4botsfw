@@ -1,14 +1,13 @@
 package dalgo4botsfw
 
 import (
-	"github.com/strongo/dalgo/dal"
 	"testing"
 )
 
 func TestNewBotChatStore(t *testing.T) {
 	type args struct {
 		collection string
-		db         dal.Database
+		db         DbProvider
 	}
 	tests := []struct {
 		name        string

@@ -1,4 +1,4 @@
-package botsfw2dalgo
+package dalgo4botsfw
 
 import (
 	"context"

@@ -3,7 +3,7 @@ module github.com/strongo/bots-fw-dalgo
 go 1.20
 
 require (
-	github.com/strongo/bots-framework v0.9.6
+	github.com/strongo/bots-framework v0.9.7
 	github.com/strongo/dalgo v0.0.26
 )
 

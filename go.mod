@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/strongo/bots-framework v0.9.6
-	github.com/strongo/dalgo v0.0.26
+	github.com/strongo/dalgo v0.1.0
 )
 
 require (

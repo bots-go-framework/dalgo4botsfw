@@ -1,7 +1,7 @@
 package dalgo4botsfw
 
 import (
-	"github.com/strongo/bots-framework/botsfw"
+	"github.com/bots-go-framework/bots-fw/botsfw"
 	"testing"
 )
 

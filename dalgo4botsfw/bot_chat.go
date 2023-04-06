@@ -1,8 +1,8 @@
 package dalgo4botsfw
 
 import (
-	"github.com/strongo/bots-framework/botsfw"
-	"github.com/strongo/dalgo/record"
+	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/dal-go/dalgo/record"
 )
 
 type botChat struct {

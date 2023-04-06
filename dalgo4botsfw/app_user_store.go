@@ -2,7 +2,7 @@ package dalgo4botsfw
 
 import (
 	"context"
-	"github.com/strongo/bots-framework/botsfw"
+	"github.com/bots-go-framework/bots-fw/botsfw"
 )
 
 var _ botsfw.BotAppUserStore = (*appUserStore)(nil)

@@ -3,8 +3,8 @@ package dalgo4botsfw
 import (
 	"context"
 	"fmt"
-	"github.com/strongo/bots-framework/botsfw"
-	"github.com/strongo/dalgo/dal"
+	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/dal-go/dalgo/dal"
 )
 
 var _ botsfw.BotChatStore = (*botChatStore)(nil)

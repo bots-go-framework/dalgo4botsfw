@@ -3,9 +3,9 @@ package dalgo4botsfw
 import (
 	"context"
 	"fmt"
-	"github.com/strongo/bots-framework/botsfw"
-	"github.com/strongo/dalgo/dal"
-	"github.com/strongo/dalgo/record"
+	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/record"
 )
 
 var _ botsfw.BotUserStore = (*botUserStore)(nil)

@@ -2,7 +2,7 @@ package dalgo4botsfw
 
 import (
 	"context"
-	"github.com/strongo/dalgo/dal"
+	"github.com/dal-go/dalgo/dal"
 )
 
 type DbProvider func(c context.Context) (dal.Database, error)

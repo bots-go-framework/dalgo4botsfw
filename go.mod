@@ -3,8 +3,8 @@ module github.com/bots-go-framework/bots-fw-dalgo
 go 1.20
 
 require (
-	github.com/bots-go-framework/bots-fw v0.9.10
-	github.com/dal-go/dalgo v0.2.5
+	github.com/bots-go-framework/bots-fw v0.9.11
+	github.com/dal-go/dalgo v0.2.6
 )
 
 require (
@@ -12,7 +12,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7 // indirect
-	github.com/strongo/app v0.0.2 // indirect
+	github.com/strongo/app v0.0.5 // indirect
 	github.com/strongo/emoji v0.0.1 // indirect
 	github.com/strongo/gamp v0.0.1 // indirect
 	github.com/strongo/log v0.0.1 // indirect

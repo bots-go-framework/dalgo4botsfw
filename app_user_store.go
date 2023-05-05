@@ -11,11 +11,11 @@ type appUserStore struct {
 	dalgoStore
 }
 
-func (a appUserStore) GetAppUserByID(c context.Context, appUserID int64, appUser botsfw.BotAppUser) error {
+func (a appUserStore) GetAppUserByID(c context.Context, appUserID string, appUser botsfw.BotAppUser) error {
 	panic("implement me") //TODO implement me
 }
 
-func (a appUserStore) CreateAppUser(c context.Context, botID string, actor botsfw.WebhookActor) (appUserID int64, appUserEntity botsfw.BotAppUser, err error) {
+func (a appUserStore) CreateAppUser(c context.Context, botID string, actor botsfw.WebhookActor) (appUserID string, appUserEntity botsfw.BotAppUser, err error) {
 	panic("implement me") //TODO implement me
 }
 

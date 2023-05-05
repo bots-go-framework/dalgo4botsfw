@@ -39,19 +39,19 @@ func NewBotUserStore(collection string, db DbProvider, newBotUserData func() bot
 	}
 }
 
-type botUserWithInt64ID struct {
-	record.WithID[int64]
+type botUserWithStrID struct {
+	record.WithID[string]
 	Data botsfw.BotUser
 }
 
 // GetBotUserByID returns bot user data
-func (store botUserStore) GetBotUserByID(c context.Context, botUserID any) (botsfw.BotUser, error) {
+func (store botUserStore) GetBotUserByID(c context.Context, botUserID string) (botsfw.BotUser, error) {
 	key := store.botUserKey(botUserID)
 	botUserData := store.newBotUserData()
-	botUser := botUserWithInt64ID{
+	botUser := botUserWithStrID{
 		Data: botUserData,
-		WithID: record.WithID[int64]{
-			ID:     botUserID.(int64),
+		WithID: record.WithID[string]{
+			ID:     botUserID,
 			Record: dal.NewRecordWithData(key, botUserData),
 		},
 	}
@@ -63,7 +63,7 @@ func (store botUserStore) GetBotUserByID(c context.Context, botUserID any) (bots
 }
 
 // SaveBotUser saves bot user data
-func (store botUserStore) SaveBotUser(c context.Context, botUserID any, botUserData botsfw.BotUser) error {
+func (store botUserStore) SaveBotUser(c context.Context, botUserID string, botUserData botsfw.BotUser) error {
 	key := store.botUserKey(botUserID)
 	record := dal.NewRecordWithData(key, botUserData)
 	db, err := store.db(c)

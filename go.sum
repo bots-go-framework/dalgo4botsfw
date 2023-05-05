@@ -1,5 +1,7 @@
 github.com/bots-go-framework/bots-fw v0.10.0 h1:aJBOrkqK/7dwhXnVVVbXd12YqYCZWavdOzmurC7Gk0o=
 github.com/bots-go-framework/bots-fw v0.10.0/go.mod h1:p4Vmy+OHQ7yiNRD/VjrOrTqPy7i8LImRiB7z/I+EDY8=
+github.com/bots-go-framework/bots-fw v0.13.0 h1:bKyGTGIacfKsQvZqNj7Oss+XcvEC81UAGenUSDuy5XA=
+github.com/bots-go-framework/bots-fw v0.13.0/go.mod h1:xvwB/dNVyg8v/hCoF/HECtK4qVyqUM5zMIUHntxt0mk=
 github.com/bots-go-framework/bots-go-core v0.0.1 h1:Br7j+Ir3R6U8x1mnFZFq1G1K0bupJhLvdF8TIqI/7i8=
 github.com/bots-go-framework/bots-go-core v0.0.1/go.mod h1:txRZn1MlcJEiCUra3bQtpkt9IM2EFGaeUvqS1VLyl30=
 github.com/dal-go/dalgo v0.2.26 h1:pJOOwjHIxQDvIGDTDbRiAswpn7rwWDnRFqtjsnI/nS4=
@@ -15,10 +17,14 @@ github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7/go.mod h1:YARuvh7BU
 github.com/stretchr/testify v1.8.2 h1:+h33VjcLVPDHtOdpUCuF+7gSuG3yGIftsP1YvFihtJ8=
 github.com/strongo/app v0.1.0 h1:5IMFqbA38JPwIOkvKKMdtHEvArFACTN82D7SCxbBvnk=
 github.com/strongo/app v0.1.0/go.mod h1:GxRrxCm3DYVZmKWOQWLBFpGD7KgmUozQfogIPGOHKUk=
+github.com/strongo/app v0.3.0 h1:OzgADc/HPa/cleD9EIJSgoMT12w8hEmLtjxyNI1qau4=
+github.com/strongo/app v0.3.0/go.mod h1:xPE1dmccArgH6xcyyS6c+r2uaB1GCBmUlvXgt45PRsM=
 github.com/strongo/emoji v0.0.1 h1:0Zev257CEmTVSyMiAovjqtgP+JKclp2e1c2V/jfVqwc=
 github.com/strongo/emoji v0.0.1/go.mod h1:aawHc+8HqsTyoNQj2DknYL/jVp2WQ1GCJgPrJz6MD8w=
 github.com/strongo/gamp v0.0.1 h1:b6vzHUzNvbPOhzPtIja1NqKf8GQqrJWjs2gninQPZac=
 github.com/strongo/gamp v0.0.1/go.mod h1:ZcVVIzSQFygVehdtGh6KYmcp1eOacuEKb9th81WcUOw=
+github.com/strongo/i18n v0.0.2 h1:UNEUj9NHlEZIeV/tluFSE2cQcKmnIOkCbdO4Zmbq4pE=
+github.com/strongo/i18n v0.0.2/go.mod h1:4jBQ4PJ3Uiri2Y+LHJ5/o1nB1H2ToddRW/yZXSOTUjE=
 github.com/strongo/log v0.0.2 h1:8ZCCfGbq0SX8AyUklcqHxajMXj1/OaPS1a/G6LMzUB8=
 github.com/strongo/log v0.0.2/go.mod h1:C0OyprbH7WjyhcZXdveDiu5n0vxB8qZ1rQXxtUqx8y4=
 github.com/strongo/random v0.0.1 h1:OZHJBb/3uEa7OX8L2Dv2pLnSeewRmXMyTACoeto6O8I=

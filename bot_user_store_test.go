@@ -1,7 +1,7 @@
 package dalgo4botsfw
 
 import (
-	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	"testing"
 )
 
@@ -9,7 +9,7 @@ func TestNewBotUserStore(t *testing.T) {
 	type args struct {
 		collection     string
 		db             DbProvider
-		newBotUserData func() botsfw.BotUser
+		newBotUserData func(botID string) (botsfwmodels.BotUser, error)
 		createNewUser  BotUserCreator
 	}
 	tests := []struct {
@@ -24,13 +24,11 @@ func TestNewBotUserStore(t *testing.T) {
 			if tt.shouldPanic {
 				defer func() {
 					if r := recover(); r == nil {
-						t.Errorf("NewBotUserStore() did not panic")
+						t.Errorf("newBotUserStore() did not panic")
 					}
 				}()
 			}
-			if got := NewBotUserStore(tt.args.collection, tt.args.db, tt.args.newBotUserData, tt.args.createNewUser); got == nil {
-				t.Error("NewBotUserStore() returned nil")
-			}
+			_ = newBotUserStore(tt.args.collection, tt.args.db, tt.args.newBotUserData, tt.args.createNewUser)
 		})
 	}
 }

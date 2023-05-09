@@ -3,25 +3,27 @@ package dalgo4botsfw
 import (
 	"context"
 	"fmt"
+	"github.com/bots-go-framework/bots-fw-store/botsfwdal"
+	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 )
 
-var _ botsfw.BotUserStore = (*botUserStore)(nil)
+var _ botsfwdal.BotUserStore = (*botUserStore)(nil)
 
-type BotUserCreator func(c context.Context, botID string, apiUser botsfw.WebhookActor) (botsfw.BotUser, error)
+type BotUserCreator func(c context.Context, botID string, apiUser botsfw.WebhookActor) (botsfwmodels.BotUser, error)
 
 type botUserStore struct {
 	dalgoStore
-	newBotUserData func() botsfw.BotUser
+	newBotUserData func(botID string) (botsfwmodels.BotUser, error)
 	createBotUser  BotUserCreator
 }
 
-// NewBotUserStore creates new bot user store
-func NewBotUserStore(collection string, db DbProvider, newBotUserData func() botsfw.BotUser, createBotUser BotUserCreator) botsfw.BotUserStore {
-	if db == nil {
-		panic("db is nil")
+// newBotUserStore creates new bot user store
+func newBotUserStore(collection string, getDb DbProvider, newBotUserData func(botID string) (botsfwmodels.BotUser, error), createBotUser BotUserCreator) botUserStore {
+	if getDb == nil {
+		panic("getDb is nil")
 	}
 	if collection == "" {
 		panic("collection is empty")
@@ -29,9 +31,9 @@ func NewBotUserStore(collection string, db DbProvider, newBotUserData func() bot
 	if newBotUserData == nil {
 		panic("newBotUserData is nil")
 	}
-	return &botUserStore{
+	return botUserStore{
 		dalgoStore: dalgoStore{
-			db:         db,
+			getDb:      getDb,
 			collection: collection,
 		},
 		newBotUserData: newBotUserData,
@@ -41,13 +43,16 @@ func NewBotUserStore(collection string, db DbProvider, newBotUserData func() bot
 
 type botUserWithStrID struct {
 	record.WithID[string]
-	Data botsfw.BotUser
+	Data botsfwmodels.BotUser
 }
 
 // GetBotUserByID returns bot user data
-func (store botUserStore) GetBotUserByID(c context.Context, botUserID string) (botsfw.BotUser, error) {
+func (store botUserStore) GetBotUserByID(c context.Context, botID, botUserID string) (botsfwmodels.BotUser, error) {
 	key := store.botUserKey(botUserID)
-	botUserData := store.newBotUserData()
+	botUserData, err := store.newBotUserData(botID)
+	if err != nil {
+		return nil, err
+	}
 	botUser := botUserWithStrID{
 		Data: botUserData,
 		WithID: record.WithID[string]{
@@ -55,27 +60,35 @@ func (store botUserStore) GetBotUserByID(c context.Context, botUserID string) (b
 			Record: dal.NewRecordWithData(key, botUserData),
 		},
 	}
-	db, err := store.db(c)
+	db, err := store.getDb(c, botID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get db: %w", err)
+		return nil, fmt.Errorf("failed to get getDb: %w", err)
 	}
-	return botUser.Data, db.Get(c, botUser.Record)
+
+	var getter dal.Getter = db
+	if tx, ok := dal.GetTransaction(c).(dal.ReadwriteTransaction); ok && tx != nil {
+		getter = tx
+	}
+
+	if err = getter.Get(c, botUser.Record); err != nil {
+		if dal.IsNotFound(err) {
+			err = botsfwdal.NotFoundErr(err)
+		}
+		return nil, err
+	}
+	return botUser.Data, nil
 }
 
 // SaveBotUser saves bot user data
-func (store botUserStore) SaveBotUser(c context.Context, botUserID string, botUserData botsfw.BotUser) error {
+func (store botUserStore) SaveBotUser(c context.Context, botID, botUserID string, botUserData botsfwmodels.BotUser) error {
 	key := store.botUserKey(botUserID)
-	record := dal.NewRecordWithData(key, botUserData)
-	db, err := store.db(c)
-	if err != nil {
-		return fmt.Errorf("failed to get db: %w", err)
-	}
-	return db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		return tx.Set(c, record)
+	botUserRecord := dal.NewRecordWithData(key, botUserData)
+	return store.runReadwriteTransaction(c, botID, func(c context.Context, tx dal.ReadwriteTransaction) error {
+		return tx.Set(c, botUserRecord)
 	})
 }
 
-func (store botUserStore) CreateBotUser(c context.Context, botID string, apiUser botsfw.WebhookActor) (botsfw.BotUser, error) {
+func (store botUserStore) CreateBotUser(c context.Context, botID string, apiUser botsfw.WebhookActor) (botsfwmodels.BotUser, error) {
 	return store.createBotUser(c, botID, apiUser)
 }
 

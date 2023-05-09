@@ -3,67 +3,74 @@ package dalgo4botsfw
 import (
 	"context"
 	"fmt"
-	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/bots-go-framework/bots-fw-store/botsfwdal"
+	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	"github.com/dal-go/dalgo/dal"
 )
 
-var _ botsfw.BotChatStore = (*botChatStore)(nil)
+var _ botsfwdal.BotChatStore = (*botChatStore)(nil)
 
-func NewBotChatStore(collection string, db DbProvider, newData func() botsfw.BotChat) botsfw.BotChatStore {
+func newBotChatStore(collection string, getDb DbProvider, newChatData func(botID string) (botsfwmodels.BotChat, error)) botChatStore {
 	if collection == "" {
 		panic("collection is empty")
 	}
-	if db == nil {
-		panic("db is nil")
+	if getDb == nil {
+		panic("getDb is nil")
 	}
-	if newData == nil {
-		panic("newData is nil")
+	if newChatData == nil {
+		panic("newChatData is nil")
 	}
 	return botChatStore{
 		dalgoStore: dalgoStore{
-			db:         db,
+			getDb:      getDb,
 			collection: collection,
 		},
-		newData: newData,
+		newData: newChatData,
 	}
 }
 
 type botChatStore struct {
 	dalgoStore
-	newData func() botsfw.BotChat
+	newData func(botID string) (botsfwmodels.BotChat, error)
 }
 
-func (store botChatStore) chatKey(botID, chatID string) *dal.Key {
+func (store *botChatStore) chatKey(botID, chatID string) *dal.Key {
 	return dal.NewKeyWithID(store.collection, fmt.Sprintf("%s:%s", botID, chatID))
 }
 
-func (store botChatStore) GetBotChatEntityByID(c context.Context, botID, chatID string) (botsfw.BotChat, error) {
+func (store *botChatStore) GetBotChatEntityByID(c context.Context, botID, chatID string) (botsfwmodels.BotChat, error) {
 	key := store.chatKey(botID, chatID)
-	data := store.newData()
-	record := dal.NewRecordWithData(key, data)
-	db, err := store.db(c)
+	data, err := store.newData(botID)
 	if err != nil {
 		return nil, err
 	}
-	return data, db.Get(c, record)
+	record := dal.NewRecordWithData(key, data)
+	var db dal.Database
+
+	if db, err = store.getDb(c, botID); err != nil {
+		return nil, err
+	}
+	var getter dal.Getter = db
+	if tx, ok := dal.GetTransaction(c).(dal.ReadwriteTransaction); ok && tx != nil {
+		getter = tx
+	}
+	if err = getter.Get(c, record); err != nil {
+		if dal.IsNotFound(err) {
+			err = botsfwdal.NotFoundErr(err)
+		}
+		return nil, err
+	}
+	return data, nil
 }
 
-func (store botChatStore) SaveBotChat(c context.Context, botID, chatID string, data botsfw.BotChat) error {
-	db, err := store.db(c)
-	if err != nil {
-		return err
-	}
+func (store *botChatStore) SaveBotChat(c context.Context, botID, chatID string, data botsfwmodels.BotChat) error {
 	key := store.chatKey(botID, chatID)
 	record := dal.NewRecordWithData(key, data)
-	return db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	return store.runReadwriteTransaction(c, botID, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		return tx.Set(c, record)
 	})
 }
 
-func (store botChatStore) NewBotChatEntity(c context.Context, botID string, botChat botsfw.WebhookChat, appUserID, botUserID string, isAccessGranted bool) botsfw.BotChat {
-	panic("implement me") //TODO implement me
-}
-
-func (store botChatStore) Close(c context.Context) error {
-	panic("implement me") //TODO implement me
+func (store *botChatStore) Close(c context.Context) error {
+	return nil
 }

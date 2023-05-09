@@ -21,13 +21,11 @@ func TestNewBotChatStore(t *testing.T) {
 			if tt.shouldPanic {
 				defer func() {
 					if r := recover(); r == nil {
-						t.Errorf("NewBotChatStore() did not panic")
+						t.Errorf("newBotChatStore() did not panic")
 					}
 				}()
 			}
-			if got := NewBotChatStore(tt.args.collection, tt.args.db, nil); got == nil {
-				t.Error("NewBotChatStore() returned nil")
-			}
+			_ = newBotChatStore(tt.args.collection, tt.args.db, nil)
 		})
 	}
 }

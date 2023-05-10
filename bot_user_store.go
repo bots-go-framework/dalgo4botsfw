@@ -93,5 +93,14 @@ func (store botUserStore) CreateBotUser(c context.Context, botID string, apiUser
 }
 
 func (store botUserStore) botUserKey(botUserID any) *dal.Key {
-	return dal.NewKeyWithID(store.collection, botUserID.(int64))
+	switch id := botUserID.(type) {
+	case string:
+		return dal.NewKeyWithID(store.collection, id)
+	case int:
+		return dal.NewKeyWithID(store.collection, id)
+	case int64:
+		return dal.NewKeyWithID(store.collection, id)
+	default:
+		panic(fmt.Sprintf("unsupported botUserID type: %T: %v", botUserID, botUserID))
+	}
 }

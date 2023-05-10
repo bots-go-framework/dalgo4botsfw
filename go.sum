@@ -6,6 +6,8 @@ github.com/bots-go-framework/bots-go-core v0.0.1 h1:Br7j+Ir3R6U8x1mnFZFq1G1K0bup
 github.com/bots-go-framework/bots-go-core v0.0.1/go.mod h1:txRZn1MlcJEiCUra3bQtpkt9IM2EFGaeUvqS1VLyl30=
 github.com/dal-go/dalgo v0.2.27 h1:gjrb13ONf5Nuqhr1y2G4EKMa8vIZbeCT/BHUaMpa2sg=
 github.com/dal-go/dalgo v0.2.27/go.mod h1:b0U+y2xjE5xY+HJ+vAt1DDcJe32N98tbRWDp5tPTwIc=
+github.com/dal-go/dalgo v0.2.28 h1:/FYFQgrUUvE2rIXv1N1mOvCHYqWNQfun1FrETozgYCI=
+github.com/dal-go/dalgo v0.2.28/go.mod h1:b0U+y2xjE5xY+HJ+vAt1DDcJe32N98tbRWDp5tPTwIc=
 github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7 h1:xoIK0ctDddBMnc74udxJYBqlo9Ylnsp1waqjLsnef20=
 github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7/go.mod h1:YARuvh7BUWHNhzDq2OM5tzR2RiCcN2D7sapiKyCel/M=
 github.com/strongo/app v0.4.0 h1:I3o7zWG1TBHe6Y/4iEwxtBLQnqH0B7xhMu7TPdbqJpI=

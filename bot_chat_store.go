@@ -50,9 +50,14 @@ func (store *botChatStore) GetBotChatEntityByID(c context.Context, botID, chatID
 	if db, err = store.getDb(c, botID); err != nil {
 		return nil, err
 	}
+
 	var getter dal.Getter = db
-	if tx, ok := dal.GetTransaction(c).(dal.ReadwriteTransaction); ok && tx != nil {
-		getter = tx
+
+	if tx := dal.GetTransaction(c); tx != nil {
+		var isRW bool
+		if getter, isRW = tx.(dal.ReadTransaction); !isRW {
+			getter = nil
+		}
 	}
 	if err = getter.Get(c, record); err != nil {
 		if dal.IsNotFound(err) {

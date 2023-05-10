@@ -2,6 +2,7 @@ package dalgo4botsfw
 
 import (
 	"context"
+	"errors"
 	"github.com/bots-go-framework/bots-fw-store/botsfwdal"
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	"github.com/dal-go/dalgo/dal"
@@ -34,13 +35,23 @@ func NewDataAccess(
 	if getDb == nil {
 		panic("getDb == nil")
 	}
+	getDbWrapper := func(c context.Context, botID string) (dal.Database, error) {
+		db, err := getDb(c, botID)
+		if err != nil {
+			return db, err
+		}
+		if db == nil {
+			return nil, errors.New("db provider returned no db")
+		}
+		return db, nil
+	}
 	if recordsMaker == nil {
 		panic("recordsMaker == nil")
 	}
 	return &dataAccess{
 		getDb:        getDb,
-		botChatStore: newBotChatStore("botChat", getDb, recordsMaker.MakeBotChatDto),
-		botUserStore: newBotUserStore("botUser", getDb, recordsMaker.MakeBotUserDto, nil),
-		appUserStore: newAppUserStore("appUser", getDb),
+		botChatStore: newBotChatStore("botChat", getDbWrapper, recordsMaker.MakeBotChatDto),
+		botUserStore: newBotUserStore("botUser", getDbWrapper, recordsMaker.MakeBotUserDto, nil),
+		appUserStore: newAppUserStore("appUser", getDbWrapper),
 	}
 }

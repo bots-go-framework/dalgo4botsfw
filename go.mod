@@ -10,7 +10,7 @@ go 1.20
 require (
 	github.com/bots-go-framework/bots-fw v0.16.0
 	github.com/bots-go-framework/bots-fw-store v0.0.4
-	github.com/dal-go/dalgo v0.2.27
+	github.com/dal-go/dalgo v0.2.28
 )
 
 require (

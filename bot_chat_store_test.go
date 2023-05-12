@@ -7,6 +7,7 @@ import (
 func TestNewBotChatStore(t *testing.T) {
 	type args struct {
 		collection string
+		platform   string
 		db         DbProvider
 	}
 	tests := []struct {
@@ -25,7 +26,7 @@ func TestNewBotChatStore(t *testing.T) {
 					}
 				}()
 			}
-			_ = newBotChatStore(tt.args.collection, tt.args.db, nil)
+			_ = newBotChatStore(tt.args.collection, tt.args.platform, tt.args.db, nil)
 		})
 	}
 }

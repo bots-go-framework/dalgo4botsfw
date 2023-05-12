@@ -8,6 +8,7 @@ import (
 func TestNewBotUserStore(t *testing.T) {
 	type args struct {
 		collection     string
+		platform       string
 		db             DbProvider
 		newBotUserData func(botID string) (botsfwmodels.BotUserData, error)
 		createNewUser  BotUserCreator
@@ -28,7 +29,7 @@ func TestNewBotUserStore(t *testing.T) {
 					}
 				}()
 			}
-			_ = newBotUserStore(tt.args.collection, tt.args.db, tt.args.newBotUserData, tt.args.createNewUser)
+			_ = newBotUserStore(tt.args.collection, tt.args.platform, tt.args.db, tt.args.newBotUserData, tt.args.createNewUser)
 		})
 	}
 }

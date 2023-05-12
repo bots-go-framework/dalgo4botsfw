@@ -2,13 +2,13 @@ module github.com/bots-go-framework/dalgo4botsfw
 
 go 1.20
 
-replace github.com/bots-go-framework/bots-fw-store => ../bots-fw-store
+//replace github.com/bots-go-framework/bots-fw-store => ../bots-fw-store
 
-replace github.com/bots-go-framework/bots-fw => ../bots-fw
+//replace github.com/bots-go-framework/bots-fw => ../bots-fw
 
 require (
-	github.com/bots-go-framework/bots-fw v0.16.0
-	github.com/bots-go-framework/bots-fw-store v0.0.4
+	github.com/bots-go-framework/bots-fw v0.16.2
+	github.com/bots-go-framework/bots-fw-store v0.0.5
 	github.com/dal-go/dalgo v0.2.28
 )
 

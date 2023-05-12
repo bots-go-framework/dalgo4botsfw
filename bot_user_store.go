@@ -12,16 +12,17 @@ import (
 
 var _ botsfwdal.BotUserStore = (*botUserStore)(nil)
 
-type BotUserCreator func(c context.Context, botID string, apiUser botsfw.WebhookActor) (botsfwmodels.BotUser, error)
+type BotUserCreator func(c context.Context, botID string, apiUser botsfw.WebhookActor) (botsfwmodels.BotUserData, error)
 
 type botUserStore struct {
 	dalgoStore
-	newBotUserData func(botID string) (botsfwmodels.BotUser, error)
+	platform       string
+	newBotUserData func(botID string) (botsfwmodels.BotUserData, error)
 	createBotUser  BotUserCreator
 }
 
 // newBotUserStore creates new bot user store
-func newBotUserStore(collection string, getDb DbProvider, newBotUserData func(botID string) (botsfwmodels.BotUser, error), createBotUser BotUserCreator) botUserStore {
+func newBotUserStore(collection, platform string, getDb DbProvider, newBotUserData func(botID string) (botsfwmodels.BotUserData, error), createBotUser BotUserCreator) botUserStore {
 	if getDb == nil {
 		panic("getDb is nil")
 	}
@@ -36,6 +37,7 @@ func newBotUserStore(collection string, getDb DbProvider, newBotUserData func(bo
 			getDb:      getDb,
 			collection: collection,
 		},
+		platform:       platform,
 		newBotUserData: newBotUserData,
 		createBotUser:  createBotUser,
 	}
@@ -43,15 +45,14 @@ func newBotUserStore(collection string, getDb DbProvider, newBotUserData func(bo
 
 type botUserWithStrID struct {
 	record.WithID[string]
-	Data botsfwmodels.BotUser
+	Data botsfwmodels.BotUserData
 }
 
 // GetBotUserByID returns bot user data
-func (store botUserStore) GetBotUserByID(c context.Context, botID, botUserID string) (botsfwmodels.BotUser, error) {
-	key := store.botUserKey(botUserID)
-	botUserData, err := store.newBotUserData(botID)
-	if err != nil {
-		return nil, err
+func (store botUserStore) GetBotUserByID(c context.Context, botID, botUserID string) (botUserData botsfwmodels.BotUserData, err error) {
+	key := store.botUserRecordKey(botUserID)
+	if botUserData, err = store.newBotUserData(botID); err != nil {
+		return
 	}
 	botUser := botUserWithStrID{
 		Data: botUserData,
@@ -60,9 +61,10 @@ func (store botUserStore) GetBotUserByID(c context.Context, botID, botUserID str
 			Record: dal.NewRecordWithData(key, botUserData),
 		},
 	}
-	db, err := store.getDb(c, botID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get getDb: %w", err)
+	var db dal.Database
+	if db, err = store.getDb(c, botID); err != nil {
+		err = fmt.Errorf("failed to get getDb: %w", err)
+		return
 	}
 
 	var getter dal.Getter = db
@@ -74,33 +76,25 @@ func (store botUserStore) GetBotUserByID(c context.Context, botID, botUserID str
 		if dal.IsNotFound(err) {
 			err = botsfwdal.NotFoundErr(err)
 		}
-		return nil, err
+		return
 	}
-	return botUser.Data, nil
+	return
 }
 
 // SaveBotUser saves bot user data
-func (store botUserStore) SaveBotUser(c context.Context, botID, botUserID string, botUserData botsfwmodels.BotUser) error {
-	key := store.botUserKey(botUserID)
+func (store botUserStore) SaveBotUser(c context.Context, botID, botUserID string, botUserData botsfwmodels.BotUserData) error {
+	key := store.botUserRecordKey(botUserID)
 	botUserRecord := dal.NewRecordWithData(key, botUserData)
 	return store.runReadwriteTransaction(c, botID, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		return tx.Set(c, botUserRecord)
 	})
 }
 
-func (store botUserStore) CreateBotUser(c context.Context, botID string, apiUser botsfw.WebhookActor) (botsfwmodels.BotUser, error) {
+func (store botUserStore) CreateBotUser(c context.Context, botID string, apiUser botsfw.WebhookActor) (botsfwmodels.BotUserData, error) {
 	return store.createBotUser(c, botID, apiUser)
 }
 
-func (store botUserStore) botUserKey(botUserID any) *dal.Key {
-	switch id := botUserID.(type) {
-	case string:
-		return dal.NewKeyWithID(store.collection, id)
-	case int:
-		return dal.NewKeyWithID(store.collection, id)
-	case int64:
-		return dal.NewKeyWithID(store.collection, id)
-	default:
-		panic(fmt.Sprintf("unsupported botUserID type: %T: %v", botUserID, botUserID))
-	}
+func (store botUserStore) botUserRecordKey(botUserID any) *dal.Key {
+	id := fmt.Sprintf("%s:%s", store.platform, botUserID)
+	return dal.NewKeyWithID(store.collection, id)
 }

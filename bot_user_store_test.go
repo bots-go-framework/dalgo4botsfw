@@ -9,7 +9,7 @@ func TestNewBotUserStore(t *testing.T) {
 	type args struct {
 		collection     string
 		db             DbProvider
-		newBotUserData func(botID string) (botsfwmodels.BotUser, error)
+		newBotUserData func(botID string) (botsfwmodels.BotUserData, error)
 		createNewUser  BotUserCreator
 	}
 	tests := []struct {

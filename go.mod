@@ -2,10 +2,9 @@ module github.com/bots-go-framework/dalgo4botsfw
 
 go 1.20
 
-//replace (
-//	github.com/bots-go-framework/bots-fw => ../bots-fw
-//	github.com/bots-go-framework/bots-fw-store => ../bots-fw-store
-//)
+replace github.com/bots-go-framework/bots-fw-store => ../bots-fw-store
+
+replace github.com/bots-go-framework/bots-fw => ../bots-fw
 
 require (
 	github.com/bots-go-framework/bots-fw v0.16.0
@@ -20,4 +19,5 @@ require (
 	github.com/strongo/gamp v0.0.1 // indirect
 	github.com/strongo/i18n v0.0.4 // indirect
 	github.com/strongo/random v0.0.1 // indirect
+	github.com/strongo/validation v0.0.1 // indirect
 )

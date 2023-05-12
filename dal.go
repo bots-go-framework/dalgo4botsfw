@@ -29,6 +29,7 @@ func (da dataAccess) RunInTransaction(c context.Context, botID string, f func(c 
 }
 
 func NewDataAccess(
+	platform string,
 	getDb DbProvider,
 	recordsMaker botsfwmodels.BotRecordsMaker,
 ) botsfwdal.DataAccess {
@@ -50,8 +51,8 @@ func NewDataAccess(
 	}
 	return &dataAccess{
 		getDb:        getDb,
-		botChatStore: newBotChatStore("botChat", getDbWrapper, recordsMaker.MakeBotChatDto),
-		botUserStore: newBotUserStore("botUser", getDbWrapper, recordsMaker.MakeBotUserDto, nil),
+		botChatStore: newBotChatStore("botChat", platform, getDbWrapper, recordsMaker.MakeBotChatDto),
+		botUserStore: newBotUserStore("botUser", platform, getDbWrapper, recordsMaker.MakeBotUserDto, nil),
 		appUserStore: newAppUserStore("appUser", getDbWrapper),
 	}
 }

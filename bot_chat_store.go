@@ -10,7 +10,7 @@ import (
 
 var _ botsfwdal.BotChatStore = (*botChatStore)(nil)
 
-func newBotChatStore(collection string, getDb DbProvider, newChatData func(botID string) (botsfwmodels.BotChat, error)) botChatStore {
+func newBotChatStore(collection, platform string, getDb DbProvider, newChatData func(botID string) (botsfwmodels.ChatData, error)) botChatStore {
 	if collection == "" {
 		panic("collection is empty")
 	}
@@ -25,29 +25,31 @@ func newBotChatStore(collection string, getDb DbProvider, newChatData func(botID
 			getDb:      getDb,
 			collection: collection,
 		},
-		newData: newChatData,
+		platform: platform,
+		newData:  newChatData,
 	}
 }
 
 type botChatStore struct {
 	dalgoStore
-	newData func(botID string) (botsfwmodels.BotChat, error)
+	platform string
+	newData  func(botID string) (botsfwmodels.ChatData, error)
 }
 
-func (store *botChatStore) chatKey(botID, chatID string) *dal.Key {
-	return dal.NewKeyWithID(store.collection, fmt.Sprintf("%s:%s", botID, chatID))
+func (store *botChatStore) botChatRecordKey(k botsfwmodels.ChatKey) *dal.Key {
+	return dal.NewKeyWithID(store.collection, fmt.Sprintf("%s:%s:%s", store.platform, k.BotID, k.ChatID))
 }
 
-func (store *botChatStore) GetBotChatEntityByID(c context.Context, botID, chatID string) (botsfwmodels.BotChat, error) {
-	key := store.chatKey(botID, chatID)
-	data, err := store.newData(botID)
+func (store *botChatStore) GetBotChatData(c context.Context, chatKey botsfwmodels.ChatKey) (chatData botsfwmodels.ChatData, err error) {
+	recordKey := store.botChatRecordKey(chatKey)
+	chatData, err = store.newData(chatKey.BotID)
+	chatData.Base().ChatKey = chatKey
 	if err != nil {
-		return nil, err
+		return
 	}
-	record := dal.NewRecordWithData(key, data)
 	var db dal.Database
 
-	if db, err = store.getDb(c, botID); err != nil {
+	if db, err = store.getDb(c, chatKey.BotID); err != nil {
 		return nil, err
 	}
 
@@ -59,19 +61,19 @@ func (store *botChatStore) GetBotChatEntityByID(c context.Context, botID, chatID
 			getter = nil
 		}
 	}
+	record := dal.NewRecordWithData(recordKey, chatData)
 	if err = getter.Get(c, record); err != nil {
 		if dal.IsNotFound(err) {
 			err = botsfwdal.NotFoundErr(err)
 		}
-		return nil, err
 	}
-	return data, nil
+	return
 }
 
-func (store *botChatStore) SaveBotChat(c context.Context, botID, chatID string, data botsfwmodels.BotChat) error {
-	key := store.chatKey(botID, chatID)
+func (store *botChatStore) SaveBotChatData(c context.Context, chatKey botsfwmodels.ChatKey, data botsfwmodels.ChatData) error {
+	key := store.botChatRecordKey(chatKey)
 	record := dal.NewRecordWithData(key, data)
-	return store.runReadwriteTransaction(c, botID, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	return store.runReadwriteTransaction(c, chatKey.BotID, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		return tx.Set(c, record)
 	})
 }

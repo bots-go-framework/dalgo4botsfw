@@ -14,7 +14,7 @@ type appUserStore struct {
 	dalgoStore
 }
 
-func (store appUserStore) GetAppUserByID(c context.Context, botID, appUserID string, appUser botsfwmodels.BotAppUser) error {
+func (store appUserStore) GetAppUserByID(c context.Context, botID, appUserID string, appUser botsfwmodels.AppUserData) error {
 	key := dal.NewKeyWithID(store.collection, appUserID)
 	record := dal.NewRecordWithData(key, appUser)
 	db, err := store.getDb(c, botID)
@@ -35,7 +35,7 @@ func (store appUserStore) GetAppUserByID(c context.Context, botID, appUserID str
 	return nil
 }
 
-func (store appUserStore) CreateAppUser(c context.Context, botID string, appUserData botsfwmodels.BotAppUser) (appUserID string, err error) {
+func (store appUserStore) CreateAppUser(c context.Context, botID string, appUserData botsfwmodels.AppUserData) (appUserID string, err error) {
 	record := dal.NewRecordWithIncompleteKey(store.collection, reflect.String, appUserData)
 	return appUserID, store.runReadwriteTransaction(c, botID, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		if err = tx.Insert(c, record); err != nil {
@@ -46,7 +46,7 @@ func (store appUserStore) CreateAppUser(c context.Context, botID string, appUser
 	})
 }
 
-func (store appUserStore) SaveAppUser(c context.Context, botID, appUserID string, appUserData botsfwmodels.BotAppUser) (err error) {
+func (store appUserStore) SaveAppUser(c context.Context, botID, appUserID string, appUserData botsfwmodels.AppUserData) (err error) {
 	record := dal.NewRecordWithData(dal.NewKeyWithID(store.collection, appUserID), appUserData)
 	return store.runReadwriteTransaction(c, botID, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		return tx.Set(c, record)

@@ -11,11 +11,11 @@ import (
 var _ botsfwdal.DataAccess = (*dataAccess)(nil)
 
 type dataAccess struct {
-	getDb        DbProvider
-	recordsMaker botsfwmodels.BotRecordsMaker
+	getDb DbProvider
 	botChatStore
 	botUserStore
 	appUserStore
+	//recordsMaker botsfwmodels.BotRecordsMaker
 }
 
 func (da dataAccess) RunInTransaction(c context.Context, botID string, f func(c context.Context) error) error {
